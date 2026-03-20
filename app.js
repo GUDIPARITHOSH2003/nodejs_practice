@@ -4,9 +4,14 @@ let fs=require('fs')
 let morgan=require('morgan')
 let dotenv=require("dotenv")
 dotenv.config()
-let categoryRouter=require("./src/controller/CategoryRouter")
-let productRouter=require("./src/controller/ProductRouter")
+
 port=process.env.PORT || 3000
+let menu=[
+    {name:'Category',link:'/category'},
+    {name:'Products',link:'/products'}
+]
+let categoryRouter=require("./src/controller/CategoryRouter")(menu);
+let productRouter=require("./src/controller/ProductRouter")(menu);
 app.use(morgan('common',{stream:fs.createWriteStream('./app.log')}))
 //static content
 app.use(express.static(__dirname+'/public'))
@@ -16,7 +21,7 @@ app.set('views','./src/views')
 app.set('view engine','ejs')
 app.get('/',(req,res)=>{
     // res.send("its working")
-    res.render('index.ejs',{title:'Home Page'})
+    res.render('index.ejs',{title:'Home Page',menu})
 })
 app.use('/category',categoryRouter)
 app.use('/products',productRouter)
